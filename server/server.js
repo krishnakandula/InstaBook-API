@@ -22,7 +22,8 @@ app.post('/books', (req, res) => {
     let book = new Book({
         title: req.body.title,
         author: req.body.author,
-        text: req.body.text
+        text: req.body.text,
+        _id: `${req.body.title}${req.body.author}`
     });
 
     book.save().then(doc => {
