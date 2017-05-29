@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const bookSchema = new mongoose.Schema({
+let bookSchema = new mongoose.Schema({
     title: {
         type: String,
         require: true,
@@ -18,6 +18,10 @@ const bookSchema = new mongoose.Schema({
         require: true,
         minlength: 10,
         trim: true
+    },
+    cover: {
+        data: Buffer,
+        contentType: String
     }
 });
 
