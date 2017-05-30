@@ -1,1 +1,1 @@
-# InstaBook-server
+# InstaBook-API
