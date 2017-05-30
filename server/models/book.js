@@ -16,7 +16,7 @@ let bookSchema = new mongoose.Schema({
         minlength: 1,
         trim: true
     },
-    text: {
+    page: {
         type: String,
         require: true,
         minlength: 10,
