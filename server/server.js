@@ -13,6 +13,7 @@ const upload = multer.apply({ dest: 'uploads/' });
 const fs = require('fs');
 
 let {Book} = require('./models/book');
+const bookUtils = require('./utils/book-utils');
 
 let app = express();
 const port = process.env.PORT;
@@ -58,7 +59,7 @@ app.get('/books/:id/:image', (req, res) => {
         }
         if(req.params.image.toUpperCase() === 'TRUE'){
             
-            //Return image as well
+            //Return image
             res.status(200).send(_.pick(book, ['cover']));
         } else {
             let bookText = _.pick(book, ['author', 'title', 'page']);
@@ -67,6 +68,32 @@ app.get('/books/:id/:image', (req, res) => {
     }).catch(err => {
         //Invalid ID, send back 'bad request'
         res.status(400).send();
+    });
+});
+
+//Get some random books
+app.get('/books/:count', (req, res) => {
+    let reqCount = parseInt(req.params.count);
+    if(Number.isNaN(reqCount) || reqCount < 1) {
+        res.status(400).send('Invalid count. Please provide an integer greater than 0');
+        return;
+    }
+
+    Book.count({}, (err, count) => {
+        if(err) {
+            //TODO: Add a more detailed error message
+            res.status(404).send();
+            return;
+        }
+
+        reqCount = Math.min(count, reqCount);
+        bookUtils.getRandomBooks(Book, reqCount, (err, randomBooks) => {
+            if(err) {
+                res.status(404).send('Unable to retrieve random books');
+            }
+
+            res.status(200).send(randomBooks);
+        });
     });
 });
 
