@@ -21,7 +21,7 @@ function getRandomBooksHelper(Book, count, randomBooks, startIndex, callback) {
 }
 
 let getBookText = book => {
-    return _.pick(book, ['author', 'title', 'page']);
+    return _.pick(book, ['_id', 'author', 'title', 'page']);
 };
 
 module.exports = {

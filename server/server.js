@@ -97,6 +97,24 @@ app.get('/books/:count', (req, res) => {
     });
 });
 
+//Delete a book
+app.delete('/books/:id', (req, res) => {
+    const id = req.params.id;
+    Book.findByIdAndRemove(id).then(book => {
+        if(!book) {
+            return res.status(404).send(`Could not find Book with id = ${id}`);
+        }
+        
+        res.status(200).send({
+            'message': `Book with id = ${id} was deleted`,
+            book
+        });
+    }, err => {
+            console.error(err);
+            return res.status(400).send();
+    });
+});
+
 app.listen(port, () => {
     console.log(`Listening on port ${port}`);
 });
