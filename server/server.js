@@ -79,21 +79,12 @@ app.get('/books/:count', (req, res) => {
         return;
     }
 
-    Book.count({}, (err, count) => {
+    bookUtils.getRandomBooks(Book, reqCount, (err, randomBooks) => {
         if(err) {
-            //TODO: Add a more detailed error message
-            res.status(404).send();
-            return;
+            res.status(404).send('Unable to retrieve random books');
         }
 
-        reqCount = Math.min(count, reqCount);
-        bookUtils.getRandomBooks(Book, reqCount, (err, randomBooks) => {
-            if(err) {
-                res.status(404).send('Unable to retrieve random books');
-            }
-
-            res.status(200).send(randomBooks);
-        });
+        res.status(200).send(randomBooks);
     });
 });
 
