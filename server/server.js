@@ -88,9 +88,8 @@ app.get('/books/cover/:id', (req, res) => {
             //Book with that ID doesn't exist
             return res.status(404).send(`A book with id = ${id} does not exist`);
         }
-
-        let bookText = _.pick(book, ['cover']);
-        res.status(200).send(bookText);
+        
+        res.status(200).send(book.cover.data);
     
     }).catch(err => {
         //Invalid ID, send back 'bad request'
