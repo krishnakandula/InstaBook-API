@@ -1,5 +1,5 @@
 # InstaBook-API
-InstaBook-API is the service that powers the InstaBook Android application. This service stores and provides books and other meta-data consumed by the app. The API was created with NodeJs, ExpressJs, and MongoDb and is hosted using Heroku. All of the books used were taken from Project Gutenberg.
+InstaBook-API is the service that powers the InstaBook Android application. This service stores and provides books and other meta-data consumed by the app. The API was created with NodeJs, ExpressJs, and MongoDb and is hosted using Heroku. All of the books used were taken from Project Gutenberg. User authentication is still be implemented so please contact me for the base url for the API.
 
 ## Features
 This API provides the information for users to quickly see a small sample of a book. Using the routes listed below, you can: 
