@@ -48,32 +48,61 @@ app.post('/books', upload.single('file'), (req, res) => {
     });
 });
 
-//Get a book
-app.get('/books/:id/:image', (req, res) => {
+/**
+ * GET a book with an id
+ * Returns the book's author, title, and page
+ */
+app.get('/books/:id', (req, res) => {
     let id = req.params.id;
+    if(!id) {
+        return res.status(404).send('No book id was recieved');
+    }
 
     Book.findById(id).then(book => {
         if(!book){
             //Book with that ID doesn't exist
-            res.status(404).send();
+            return res.status(404).send(`A book with id = ${id} does not exist`);
         }
-        if(req.params.image.toUpperCase() === 'TRUE'){
-            
-            //Return image
-            res.status(200).send(_.pick(book, ['cover']));
-        } else {
-            let bookText = _.pick(book, ['author', 'title', 'page']);
-            res.status(200).send(bookText);
-        }
+
+        let bookText = _.pick(book, ['author', 'title', 'page']);
+        res.status(200).send(bookText);
+    
     }).catch(err => {
         //Invalid ID, send back 'bad request'
         res.status(400).send();
     });
 });
 
-//Get some random books
-app.get('/books/:count', (req, res) => {
-    let reqCount = parseInt(req.params.count);
+/**
+ * GET a book cover with a book id
+ * Returns the book's cover
+ */
+app.get('/books/cover/:id', (req, res) => {
+    let id = req.params.id;
+    if(!id) {
+        return res.status(404).send('No book id was recieved');
+    }
+
+    Book.findById(id).then(book => {
+        if(!book){
+            //Book with that ID doesn't exist
+            return res.status(404).send(`A book with id = ${id} does not exist`);
+        }
+
+        let bookText = _.pick(book, ['cover']);
+        res.status(200).send(bookText);
+    
+    }).catch(err => {
+        //Invalid ID, send back 'bad request'
+        res.status(400).send();
+    });
+});
+
+/**
+ * GET an array of random books
+ */
+app.get('/books', (req, res) => {
+    let reqCount = parseInt(req.query.count) || 10;
     if(Number.isNaN(reqCount) || reqCount < 1) {
         res.status(400).send('Invalid count. Please provide an integer greater than 0');
         return;
