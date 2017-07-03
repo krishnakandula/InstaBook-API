@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate');
 
 let bookSchema = new mongoose.Schema({
     _id: {
@@ -28,6 +29,7 @@ let bookSchema = new mongoose.Schema({
     }
 });
 
+bookSchema.plugin(mongoosePaginate);
 let Book = mongoose.model('Book', bookSchema);
 
 module.exports = {
