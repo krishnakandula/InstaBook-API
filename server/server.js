@@ -13,7 +13,6 @@ const upload = multer.apply({ dest: 'uploads/' });
 const fs = require('fs');
 
 let {Book} = require('./models/book');
-const bookUtils = require('./utils/book-utils');
 
 let app = express();
 const port = process.env.PORT;
@@ -101,19 +100,42 @@ app.get('/books/cover/:id', (req, res) => {
  * GET an array of random books
  */
 app.get('/books', (req, res) => {
-    let reqCount = parseInt(req.query.count) || 10;
-    if(Number.isNaN(reqCount) || reqCount < 1) {
-        res.status(400).send('Invalid count. Please provide an integer greater than 0');
-        return;
+    let count = 50;
+    if(req.query.count && Number.isInteger(parseInt(req.query.count))) {
+        count = parseInt(req.query.count);
     }
 
-    bookUtils.getRandomBooks(Book, reqCount, (err, randomBooks) => {
-        if(err) {
-            res.status(404).send('Unable to retrieve random books');
-        }
+    let offset = 0;
+    if(req.query.offset && Number.isInteger(parseInt(req.query.offset))) {
+        offset = parseInt(req.query.offset);
+    }
 
-        res.status(200).send(randomBooks);
-    });
+    if(offset < 0) {
+        offset = 0;
+    }
+
+    let options = {
+        select: '_id title author page',
+        offset,
+        limit: count,
+        lean: true
+    };
+
+    Book.count({}).then(totalBooks => {
+        count = Math.min(count, totalBooks);
+        Book.paginate({}, options).then(books => {
+            if(offset + count >= totalBooks) {
+                offset = -1;
+            } else {
+                offset = offset + count;
+            }
+
+            res.status(200).send({offset, books: _.shuffle(books.docs)});
+        }).catch(err => {
+            console.error(err);
+            res.status(500).send('Unable to retrieve books');
+        });
+    })
 });
 
 //Delete a book
