@@ -63,7 +63,7 @@ app.get('/books/:id', (req, res) => {
             return res.status(404).send(`A book with id = ${id} does not exist`);
         }
 
-        let bookText = _.pick(book, ['author', 'title', 'page']);
+        let bookText = _.pick(book, ['_id', 'author', 'title', 'page']);
         res.status(200).send(bookText);
     
     }).catch(err => {
