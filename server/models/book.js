@@ -26,6 +26,10 @@ let bookSchema = new mongoose.Schema({
     cover: {
         data: Buffer,
         contentType: String
+    },
+    background: {
+        data: Buffer,
+        contentType: String
     }
 });
 

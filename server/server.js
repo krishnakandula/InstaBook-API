@@ -21,20 +21,35 @@ const port = process.env.PORT;
 app.use(bodyParser.json({limit: '10mb'}));
 app.use(bodyParser.urlencoded({limit: '10mb', extended: true}));
 
-
-//Create new book
-app.post('/books', upload.single('file'), (req, res) => {
+/**
+ * POST a new book
+ */
+let imageFields = [
+    {
+        name: 'cover',
+        maxCount: 1
+    }, 
+    {
+        name: 'background',
+        maxCount: 1
+    }
+];
+app.post('/books', upload.fields(imageFields), (req, res) => {
     let book = new Book({
         title: req.body.title,
         author: req.body.author,
         page: req.body.page,
         _id: `${req.body.title}${req.body.author}`
     });
-
-    if(req.file){
+    if(req.files && req.files['cover'] && req.files['cover'][0]) {
         //Save image
-        book.cover.data = req.file.buffer;
+        book.cover.data = req.files['cover'][0].buffer;
         book.cover.contentType = 'image/png';
+    }
+    
+    if(req.files && req.files['background'] && req.files['background'][0]){
+        book.background.data = req.files['background'][0].buffer;
+        book.background.contentType = 'image/png';
     }
 
     book.save().then(doc => {
@@ -89,6 +104,30 @@ app.get('/books/cover/:id', (req, res) => {
         }
         
         res.status(200).send(book.cover.data);
+    
+    }).catch(err => {
+        //Invalid ID, send back 'bad request'
+        res.status(400).send();
+    });
+});
+
+/**
+ * GET a book background with a book id
+ * Returns the book's background
+ */
+app.get('/books/background/:id', (req, res) => {
+    let id = req.params.id;
+    if(!id) {
+        return res.status(404).send('No book id was recieved');
+    }
+
+    Book.findById(id).then(book => {
+        if(!book){
+            //Book with that ID doesn't exist
+            return res.status(404).send(`A book with id = ${id} does not exist`);
+        }
+        
+        res.status(200).send(book.background.data);
     
     }).catch(err => {
         //Invalid ID, send back 'bad request'
