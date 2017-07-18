@@ -23,6 +23,16 @@ let bookSchema = new mongoose.Schema({
         minlength: 10,
         trim: true
     },
+    information: {
+        type: String,
+        required: false,
+        trim: true
+    },
+    summary: {
+        type: String,
+        required: false,
+        trim: true
+    },
     cover: {
         data: Buffer,
         contentType: String
