@@ -52,6 +52,14 @@ app.post('/books', upload.fields(imageFields), (req, res) => {
         book.background.contentType = 'image/png';
     }
 
+    if(req.body.information) {
+        book.information = req.body.information;
+    }
+
+    if(req.body.summary) {
+        book.summary = req.body.summary;
+    }
+
     book.save().then(doc => {
         if(!doc.cover.data && req.file){
             console.log('Image not saved');
@@ -78,7 +86,7 @@ app.get('/books/:id', (req, res) => {
             return res.status(404).send(`A book with id = ${id} does not exist`);
         }
 
-        let bookText = _.pick(book, ['_id', 'author', 'title', 'page']);
+        let bookText = _.pick(book, ['_id', 'author', 'title', 'page', 'summary', 'information']);
         res.status(200).send(bookText);
     
     }).catch(err => {
@@ -154,7 +162,7 @@ app.get('/books', (req, res) => {
     }
 
     let options = {
-        select: '_id title author page',
+        select: '_id title author page summary information',
         offset,
         limit: count,
         lean: true
