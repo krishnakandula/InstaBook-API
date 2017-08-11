@@ -12,6 +12,7 @@ const multer = require('multer');
 const upload = multer.apply({ dest: 'uploads/' });
 const fs = require('fs');
 
+const formatter = require('./formatter');
 let {Book} = require('./models/book');
 
 let app = express();
@@ -39,7 +40,7 @@ app.post('/books', upload.fields(imageFields), (req, res) => {
         title: req.body.title,
         author: req.body.author,
         page: req.body.page,
-        _id: `${req.body.title}${req.body.author}`
+        _id: formatter.formatInputText(`${req.body.title}${req.body.author}`)
     });
     if(req.files && req.files['cover'] && req.files['cover'][0]) {
         //Save image
@@ -54,10 +55,6 @@ app.post('/books', upload.fields(imageFields), (req, res) => {
 
     if(req.body.information) {
         book.information = req.body.information;
-    }
-
-    if(req.body.summary) {
-        book.summary = req.body.summary;
     }
 
     book.save().then(doc => {
