@@ -34,30 +34,28 @@ let imageFields = [
         maxCount: 1
     }
 ];
+
 app.post('/books', upload.fields(imageFields), (req, res) => {
     let book = new Book({
         title: req.body.title,
         author: req.body.author,
-        page: req.body.page,
-        _id: `${req.body.title}${req.body.author}`
+        page: req.body.page
     });
-    if(req.files && req.files['cover'] && req.files['cover'][0]) {
+    if(req.files) {
+        if(req.files['cover'] && req.files['cover'][0]) {
         //Save image
         book.cover.data = req.files['cover'][0].buffer;
         book.cover.contentType = 'image/png';
     }
     
-    if(req.files && req.files['background'] && req.files['background'][0]){
-        book.background.data = req.files['background'][0].buffer;
-        book.background.contentType = 'image/png';
+        if(req.files['background'] && req.files['background'][0]){
+            book.background.data = req.files['background'][0].buffer;
+            book.background.contentType = 'image/png';
+        }
     }
-
+    
     if(req.body.information) {
         book.information = req.body.information;
-    }
-
-    if(req.body.summary) {
-        book.summary = req.body.summary;
     }
 
     book.save().then(doc => {
@@ -76,6 +74,8 @@ app.post('/books', upload.fields(imageFields), (req, res) => {
  */
 app.get('/books/:id', (req, res) => {
     let id = req.params.id;
+
+    //TODO: Is this check even needed? If no ID is specified, then this becomes 'POST /books'
     if(!id) {
         return res.status(404).send('No book id was recieved');
     }

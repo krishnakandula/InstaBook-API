@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate');
 
 let bookSchema = new mongoose.Schema({
-    _id: {
-        type: String
-    },
+    // _id: {
+    //     type: String
+    // },
     title: {
         type: String,
         require: true,
@@ -24,11 +24,6 @@ let bookSchema = new mongoose.Schema({
         trim: true
     },
     information: {
-        type: String,
-        required: false,
-        trim: true
-    },
-    summary: {
         type: String,
         required: false,
         trim: true
